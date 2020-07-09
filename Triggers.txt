@@ -1,0 +1,30 @@
+USE TSQL2012;
+GO
+
+IF OBJECT_ID(N'Sales.tr_SalesOrderDetailsDML', N'TR') IS NOT NULL 
+DROP TRIGGER Sales.tr_SalesOrderDetailsDML;
+GO
+
+CREATE TRIGGER Sales.tr_SalesOrderDetailsDML
+ON Sales.OrderDetails
+AFTER DELETE, INSERT, UPDATE
+AS
+BEGIN
+	IF @@ROWCOUNT = 0 RETURN;
+	SET NOCOUNT ON;
+	SELECT COUNT(*) AS InsertedCount FROM Inserted;
+	SELECT COUNT(*) AS DeletedCount FROM Deleted;
+END;
+GO
+
+DELETE FROM Sales.OrderDetails
+WHERE orderid = 10248 and productid = 11;
+GO
+
+SELECT * FROM Sales.OrderDetails
+WHERE orderid = 10248
+GO
+UPDATE Sales.OrderDetails
+	SET unitprice = 99
+	WHERE orderid = 10248 AND productid = 42;
+GO
